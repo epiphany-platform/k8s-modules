@@ -15,11 +15,11 @@ data "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = var.prefix != null ? "${var.prefix}-aks" : local.prefix
+  name                = "${var.prefix}-aks"
   resource_group_name = data.azurerm_resource_group.main_rg.name
   location            = data.azurerm_resource_group.main_rg.location
-  dns_prefix          = var.prefix != null ? "${var.prefix}" : local.prefix
-  node_resource_group = var.prefix != null ? "${var.prefix}-rg-worker" : local.prefix
+  dns_prefix          = "${var.prefix}-aks"
+  node_resource_group = "${var.prefix}-rg-worker"
   kubernetes_version  = var.kubernetes_version
 
   default_node_pool {
@@ -80,6 +80,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   tags = {
-    Environment = var.prefix != null ? "${var.prefix}" : local.prefix
+    Environment = "${var.prefix}-aks"
   }
 }

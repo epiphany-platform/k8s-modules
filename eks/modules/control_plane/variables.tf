@@ -8,7 +8,7 @@ variable "subnet_ids" {
   type = list(string)
 }
 
-variable "k8s_version" {
+variable "kubernetes_version" {
   description = "Kubernetes version to install"
   type        = string
 }

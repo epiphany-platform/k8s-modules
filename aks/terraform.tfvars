@@ -2,10 +2,12 @@ prefix                = null
 rg_name               = null
 vnet_name             = null
 subnet_name           = null
-rsa_pub_path          = null
-kubernetes_version    = "1.22.4"
+rsa_pub_path          = null  # must-have value
+kubernetes_version    = "1.22.6"
 enable_node_public_ip = false
 enable_rbac           = false
+network_policy        = "calico"
+network_plugin        = "azure"
 default_node_pool = {
   "size" : 2,
   "min" : 2,

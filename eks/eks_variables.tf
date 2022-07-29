@@ -1,46 +1,31 @@
-variable "subnet_ids" {
-  description = "Existing subnet ids to join to"
-  type        = list(string)
-  default     = null
-}
-
 variable "name" {
   description = "Prefix for resource names"
   type        = string
   default     = "default"
-
   validation {
     condition     = length(var.name) < 44
     error_message = "Error: Prefix name is too long. Prefix name should have less than 44 characters."
   }
 }
 
-variable "k8s_version" {
+variable "kubernetes_version" {
   description = "Kubernetes version to install"
   type        = string
-  default     = "1.22"
 }
 
 variable "autoscaler_version" {
   description = "Kubernetes autoscaler version"
   type        = string
-  default     = null
+
+}
+variable "subnet_ids" {
+  description = "Existing subnet ids to join to"
+  type        = list(string)
 }
 
 variable "vpc_id" {
   description = "VPC id to join to"
   type        = string
-}
-
-variable "worker_groups" {
-  description = "Worker groups definition list"
-  type = list(object({
-    name                 = string
-    instance_type        = string
-    asg_desired_capacity = number
-    asg_min_size         = number
-    asg_max_size         = number
-  }))
 }
 
 variable "region" {
@@ -76,5 +61,15 @@ variable "ec2_ssh_key" {
 variable "use_public_ips" {
   description = "Decide if resources deployed with EKS should have assigned public IPs"
   type        = bool
-  default     = true
+}
+
+variable "worker_groups" {
+  description = "Worker groups definition list"
+  type = list(object({
+    name                 = string
+    instance_type        = string
+    asg_desired_capacity = number
+    asg_min_size         = number
+    asg_max_size         = number
+  }))
 }

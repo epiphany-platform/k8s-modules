@@ -1,6 +1,6 @@
 locals {
   subnet_ids         = var.subnet_ids != null ? var.subnet_ids : aws_subnet.eks_subnet[*].id
-  autoscaler_version = var.autoscaler_version != null ? var.autoscaler_version : local.autoscaler_default_versions[var.k8s_version]
+  autoscaler_version = var.autoscaler_version != null ? var.autoscaler_version : local.autoscaler_default_versions[var.kubernetes_version]
   autoscaler_default_versions = {
     1.16 : "v1.16.7",
     1.17 : "v1.17.4",

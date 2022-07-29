@@ -1,11 +1,10 @@
 variable "prefix" {
-  description = "Prefix for AKS resource names. If no prefix provided, one from Epiphany cluster will be used"
+  description = "Prefix for AKS resource names"
   type        = string
-  default     = null
 
   validation {
-    condition     = length(var.prefix) <= 45
-    error_message = "Error: Prefix is too long. Prefix should have less than 46 characters."
+    condition     = length(var.prefix) >= 3 && length(var.prefix) <= 45
+    error_message = "Error: Prefix is too short or too long. Prefix should have more than 2 and less than 46 characters."
   }
 }
 
@@ -45,13 +44,11 @@ variable "enable_node_public_ip" {
 variable "network_plugin" {
   description = "AKS network plugin"
   type        = string
-  default     = "azure"
 }
 
 variable "network_policy" {
   description = "AKS network policy"
   type        = string
-  default     = "calico"
 }
 
 variable "enable_rbac" {
@@ -99,7 +96,6 @@ variable "azure_ad" {
 variable "identity_type" {
   description = "The type of identity used for the managed cluster"
   type        = string
-  default     = "SystemAssigned"
 }
 
 variable "admin_username" {

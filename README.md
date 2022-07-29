@@ -6,7 +6,7 @@ Terraform modules for AKS and EKS which can be used alongside Epiphany.
 
 ### Introduction
 
-AKS and EKS modules use existing resources created by Epiphany e.g. resource groups, subnets etc. First step is to create infrastructure with Epiphany.Then, taking advantage of possibility to deploy custom Terraform scripts with Epiphany - AKS or EKS can be installed. Finally, after obtaining kubeconfig from Kubernetess service, it is possible to deploy Epiphany apps on top of that cluster.
+AKS and EKS modules use existing resources created by Epiphany e.g. resource groups, subnets etc. First step is to create infrastructure with Epiphany. Then, taking advantage of possibility to deploy custom Terraform scripts with Epiphany - AKS or EKS can be installed. Finally, after obtaining kubeconfig from Kubernetess service, it is possible to deploy Epiphany apps on top of that cluster.
 
 ### 1. Creating Epiphany cluster infrastructure
 
@@ -68,16 +68,21 @@ See [How to additional custom terrafrom templates](https://github.com/epiphany-p
 ### 3. Deploying AKS/EKS alongside Epiphany cluster
 
 Before applying the configuration, parameters related to the AKS/EKS needs to be a provided.
-Both `aks` and `eks` directories contain:
+
+#### Suppyling parameters
+
+Both `aks` and `eks` modules contain:
 
 - `variables.tf` - describes inputs for AKS/EKS
 - `terraform.tfvars` - template configuration file used to provide input variables
 
-In both cases (AKS/EKS) there are mandatory parameters that needs to be provided. For values which are going to be reused from existing Epiphany
-cluster, you can find them via cloud provider dashboard or by inspecting terrafrom state file in your cluster - `/shared/build/clustername/terraform/terraform.tfstate`.
+In both cases (AKS/EKS) there are mandatory parameters of existing infrastructure that needs to be provided. Modules take advantage of reusing existing resources created by Epiphany. Majority of the values which are going to be reused, can be find via cloud provider dashboard or by inspecting terrafrom state file in your cluster - `/shared/build/clustername/terraform/terraform.tfstate`.
+
+##### Mandatory parameters
 
 **AKS:**
 
+- `prefix`
 - `rsa_pub_path`
 
 *Note:* Parameters that have default values set in `variables.tf` are automatically fetched from existing infrastructure. However, it doesn't prevent you from applying these values manually.
@@ -92,6 +97,19 @@ cluster, you can find them via cloud provider dashboard or by inspecting terrafr
 
 *Note:* EKS requires 2 subnets from differect AZs. If `subnet_ids` are not provided, EKS will create 2 new subnets in existing VPC.
 
+##### Veryfing parameters with default values
+
+By default Epiphany provides default values for most parameters, e.g. `kubernetes_version` or `autoscaler_version`, but also `auto_scaler_profile` or `worker_groups`. These values are tested by Epiphany team, so changing them requires knowledge about both AKS/EKS.
+Also, some of the parameters may differ depending on your region, e.g. for `kubernetes_version`. Please verify that values used in your configuration match criteria of your cloud provider and region.
+
+Example for `kubernetes_version` - you can check available AKS versions by running command:
+
+```bash
+az aks get-versions --location "West Europe" --output table
+```
+
+##### Deploying module
+
 When all required parameters are in place, you can deploy AKS/EKS with `epicli`.
 
 *Note:* If you plan to deploy some Epiphany apps in AKS/EKS cluster, make sure that flag `--skip-config` is set. During Epiphany Ansible provisioning, `kubeconfig` from AKS/EKS lets Epiphany to connect and configure your cluster.
@@ -101,12 +119,17 @@ When all required parameters are in place, you can deploy AKS/EKS with `epicli`.
 In order to fetch kubeconfig from Terraform output variable to a file, you can use command:
 
 ```shell
-terraform -chdir=/shared/build/clustername/terraform/ output kubeconfig | grep -v EOT > kubeconfig`
+terraform -chdir=/shared/build/clustername/terraform/ output kubeconfig | grep -v EOT > kubeconfig
 ```
 
-With kubeconfig set in your environment you can now connect and operate on your cluster.
+Next step is to configure `aws` tool. Configuration is required in order to authenticate Epiphany communication with eks cluster.
+It also gives possibility to use kubeconfig directly from local cli.
 
-*Note:* Connectivity to EKS with kubeconfig from command line requires AWS cli tool. See [EKS userguide](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html) to learn more.
+To perform basic configuration, use command:
+
+```bash
+aws configure
+```
 
 ### 5. Applying Epiphany on top of AKS/EKS
 

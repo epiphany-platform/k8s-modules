@@ -1,7 +1,7 @@
 module "control_plane" {
   source      = "./modules/control_plane"
   name        = var.name
-  k8s_version = var.k8s_version
+  kubernetes_version = var.kubernetes_version
   subnet_ids  = local.subnet_ids
   providers = {
     aws = aws
