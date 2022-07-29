@@ -122,10 +122,14 @@ In order to fetch kubeconfig from Terraform output variable to a file, you can u
 terraform -chdir=/shared/build/clustername/terraform/ output kubeconfig | grep -v EOT > kubeconfig
 ```
 
-With kubeconfig set in your environment you can now connect and operate on your cluster.
+Next step is to configure `aws` tool. Configuration is required in order to authenticate Epiphany communication with eks cluster.
+It also gives possibility to use kubeconfig directly from local cli.
 
-*Note:* Connectivity to EKS with kubeconfig from command line requires AWS cli tool. See [EKS userguide](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html) to learn more.
-Installing AWS cli tool should be followed by `aws configure` needed to setup credentials.
+To perform basic configuration, use command:
+
+```bash
+aws configure
+```
 
 ### 5. Applying Epiphany on top of AKS/EKS
 
